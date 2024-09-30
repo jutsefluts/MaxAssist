@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useState } from 'react';
-import BlockActionButtons from '../../../../components/BlockActionButtons';  // Import BlockActionButtons
+import BlockActionButtons from '../../../../components/BlockActionButtons';
 
 interface MultipleChoiceBlockProps {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRemove: () => void;
+  blockId: string; // Add blockId prop for unique identification
 }
 
 const MultipleChoiceBlock: React.FC<MultipleChoiceBlockProps> = ({
   onMoveUp,
-  onRemove,
   onMoveDown,
+  onRemove,
+  blockId,  // blockId will be passed to this component
 }) => {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['']);
@@ -28,35 +30,42 @@ const MultipleChoiceBlock: React.FC<MultipleChoiceBlockProps> = ({
   return (
     <div className="multiple-choice-block">
       <div className="question-section">
-        <label htmlFor="question">Question:</label>
+        {/* Using blockId to ensure unique id */}
+        <label htmlFor={`multiple-choice-question-${blockId}`}>Question:</label>
         <input
           type="text"
+          id={`multiple-choice-question-${blockId}`}  // Unique id using blockId
+          name={`multiple-choice-question-${blockId}`} // Unique name using blockId
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
         />
       </div>
 
       <div className="options-section">
-      <label htmlFor="options">Options:</label>
         {options.map((option, index) => (
           <div key={index}>
+            <label htmlFor={`option-${blockId}-${index}`}>Option {index + 1}:</label>
             <input
               type="text"
+              id={`option-${blockId}-${index}`}  // Unique id using blockId and index
+              name={`option-${blockId}-${index}`} // Unique name using blockId and index
               value={option}
               onChange={(e) => handleOptionChange(index, e.target.value)}
             />
             <input
               type="radio"
-              name="correctAnswer"
+              id={`correct-${blockId}-${index}`}  // Unique id for correct answer radio
+              name={`correct-answer-${blockId}`}   // Group radios by blockId
               checked={correctAnswerIndex === index}
               onChange={() => setCorrectAnswerIndex(index)}
             />
+            <label htmlFor={`correct-${blockId}-${index}`}>Correct</label>
           </div>
         ))}
-        <button onClick={addOption} className="add-option-button">Add Option</button>
+        <button onClick={addOption}>Add Option</button>
       </div>
 
-      {/* Block action buttons integrated inside the multiple-choice-block */}
+      {/* Block action buttons */}
       <BlockActionButtons 
         onMoveUp={onMoveUp} 
         onMoveDown={onMoveDown} 

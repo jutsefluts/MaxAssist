@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import MultipleChoiceBlock from "./blocks/MultipleChoiceBlock/MultipleChoiceBlock";
 import OpenQuestionBlock from "./blocks/OpenQuestionBlock/OpenQuestionBlock";
@@ -75,21 +73,21 @@ const PhaseComponent: React.FC<PhaseComponentProps> = ({
       <div className="block-list">
         {phase.blocks.map((block: LessonBlock, index: number) => {
           const blockProps = {
-            key: block.id,
             onMoveUp: () => onMoveUp(index),
             onMoveDown: () => onMoveDown(index),
             onRemove: () => onRemoveBlock(index),
+            blockId: block.id, // Add blockId explicitly
             ...block,
           };
 
           // Handle rendering based on block type
           switch (block.type) {
             case "TextBlock":
-              return <TextBlock {...blockProps} />;
+              return <TextBlock key={block.id} {...blockProps} />;
             case "OpenQuestionBlock":
-              return <OpenQuestionBlock {...blockProps} />;
+              return <OpenQuestionBlock key={block.id} {...blockProps} blockId={block.id} />;
             case "MultipleChoiceBlock":
-              return <MultipleChoiceBlock {...blockProps} />;
+              return <MultipleChoiceBlock key={block.id} {...blockProps} blockId={block.id} />;
             default:
               return null;
           }

@@ -3,14 +3,13 @@ import { LessonBlock, TextBlock, OpenQuestionBlock, MultipleChoiceBlock } from '
 
 // Function to store a lesson block in Supabase
 export const storeBlockInSupabase = async (block: LessonBlock) => {
-  // Define a variable to hold the block's data
   let blockData: any = {
     id: block.id,
     type: block.type,
-    lesson_phase: block.lesson_phase // Include lesson_phase
+    lesson_phase: block.lesson_phase,
   };
 
-  // Narrow the type and add the corresponding properties
+  // Assign properties based on block type
   switch (block.type) {
     case 'TextBlock':
       blockData.content = (block as TextBlock).content;
@@ -28,9 +27,8 @@ export const storeBlockInSupabase = async (block: LessonBlock) => {
       throw new Error('Unknown block type');
   }
 
-  // Insert the block data into Supabase
   const { data, error } = await supabase
-    .from('lesson_blocks')  // Insert into lesson_blocks table
+    .from('lesson_blocks')
     .insert([blockData]);
 
   if (error) {
