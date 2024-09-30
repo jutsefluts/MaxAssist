@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageUploader from './ImageUploader';
 import RichTextEditor from './RichTextEditor';
 import FileUploader from './FileUploader';
@@ -15,9 +13,21 @@ interface TextBlockProps {
 
 const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    // Mark component as mounted
+    setIsMounted(true);
+
+    // Cleanup function to handle unmounting
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
 
   // Function to add a file link
   const handleFileLinkAdd = (fileURL: string) => {
+    if (!isMounted) return; // Prevent updating state if not mounted
     const selection = editorState.getSelection();
 
     // Check if text is selected
@@ -35,6 +45,7 @@ const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove })
 
   // Function to remove the file link from the text
   const handleFileLinkRemove = () => {
+    if (!isMounted) return; // Prevent updating state if not mounted
     const selection = editorState.getSelection();
     if (!selection.isCollapsed()) {
       setEditorState(RichUtils.toggleLink(editorState, selection, null)); // Remove link from the selected text
@@ -43,6 +54,7 @@ const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove })
 
   // Function to handle file upload
   const handleFileUpload = (file: File | null) => {
+    if (!isMounted) return; // Prevent updating state if not mounted
     const selection = editorState.getSelection();
     if (!selection.isCollapsed()) {
       console.log('File Uploaded:', file);
@@ -55,6 +67,8 @@ const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove })
   // Check if text is selected
   const isTextSelected = !editorState.getSelection().isCollapsed();
 
+  if (!isMounted) return null; // Prevent rendering before mounting
+
   return (
     <div className="textblock-container">
       <ImageUploader onImageUpload={(url) => console.log('Image Uploaded:', url)} />
@@ -63,7 +77,7 @@ const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove })
       <FileUploader
         onFileUpload={handleFileUpload}
         onFileLinkAdd={handleFileLinkAdd}
-        onFileLinkRemove={handleFileLinkRemove}  // Pass the new file link remove function
+        onFileLinkRemove={handleFileLinkRemove}  
         isTextSelected={isTextSelected}
       />
 

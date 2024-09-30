@@ -1,4 +1,3 @@
-// hooks/useLessonBlocks.ts
 import { useState, useEffect } from 'react';
 import { fetchBlocksFromSupabase, storeBlockInSupabase } from '../services/lessonService';
 import { LessonBlock } from '@lessonTypes/lesson';
@@ -7,19 +6,21 @@ import { LessonBlock } from '@lessonTypes/lesson';
 export const useLessonBlocks = () => {
   const [blocks, setBlocks] = useState<LessonBlock[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Fetch blocks from Supabase on component mount
   useEffect(() => {
+    setIsMounted(true); // Ensure component is mounted
+
     const fetchBlocks = async () => {
+      if (!isMounted) return; // Prevent fetching if component is not mounted
       const { data, error } = await fetchBlocksFromSupabase();
       if (data) setBlocks(data);
       setLoading(false);
     };
 
     fetchBlocks();
-  }, []);
+  }, [isMounted]); // Effect dependent on mounting state
 
-  // Add a new block and store it in Supabase
   const addBlock = async (block: LessonBlock) => {
     const { data, error } = await storeBlockInSupabase(block);
     if (data) setBlocks([...blocks, block]);  // Update local state after storing in DB

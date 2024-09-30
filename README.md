@@ -1,7 +1,7 @@
 
-# Lesson Generator App
+# MaxAssist - Lesson Generator App
 
-Welcome to the **Lesson Generator App**, a powerful tool that allows educators to create, manage, and customize lessons using a variety of content blocks. The app is built with **Next.js**, **TypeScript**, and **Tailwind CSS**, providing a modern and scalable platform for lesson creation.
+Welcome to the **MaxAssist Lesson Generator App**, a powerful tool designed for educators to create, manage, and customize lessons using a variety of content blocks. This app is built using **Next.js**, **TypeScript**, and **Tailwind CSS**, offering a modern and scalable platform for lesson creation.
 
 ## Table of Contents
 
@@ -11,28 +11,30 @@ Welcome to the **Lesson Generator App**, a powerful tool that allows educators t
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Running the App](#running-the-app)
+- [Building for Production](#building-for-production)
 - [Technologies](#technologies)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
 
-The **Lesson Generator App** is designed to simplify the process of creating educational lessons by offering a block-based interface. Teachers and content creators can easily drag, drop, and customize different types of lesson blocks (Text Blocks, Multiple Choice Questions, Open Questions, etc.) within predefined phases of a lesson plan (e.g., Introduction, Instruction, Practice, Conclusion).
+The **MaxAssist Lesson Generator App** simplifies the process of creating educational lessons by offering a block-based interface. Teachers and content creators can easily drag, drop, and customize different types of lesson blocks, such as Text Blocks, Multiple Choice Questions, Open Questions, and more, within predefined phases of a lesson plan (e.g., Introduction, Instruction, Practice, Conclusion).
 
-This tool is ideal for educators looking to quickly compose lessons while maintaining flexibility and organization.
+This tool is perfect for educators looking to efficiently compose lessons while maintaining flexibility and structure.
 
 ## Features
 
 - **User Authentication**: Secure login and registration functionality.
-- **Lesson Phases**: Divide lessons into phases like Introduction, Instruction, Practice, and Conclusion.
+- **Lesson Phases**: Divide lessons into structured phases (Introduction, Instruction, Practice, Conclusion).
 - **Custom Blocks**: Create and manage different types of blocks, including Text, Multiple Choice, and Open Questions.
-- **Responsive Design**: Built with mobile and desktop in mind.
-- **Modular Structure**: The app follows a well-organized project structure for easy scalability and maintenance.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Modular Structure**: The app follows a clean and well-organized project structure for easy scalability and maintenance.
 - **API Integration**: Easily extend the app with backend services via the `services/` folder.
-- **Type Safety**: TypeScript ensures type safety across the entire application, preventing potential bugs.
+- **Type Safety**: Full TypeScript integration for better type safety and prevention of potential bugs.
 
 ## Project Structure
 
+```bash
 \`\`\`
 .
 ├── README.md
@@ -45,7 +47,6 @@ This tool is ideal for educators looking to quickly compose lessons while mainta
 │   ├── layout.tsx
 │   ├── page.module.css
 │   └── page.tsx
-├── collected_files.txt
 ├── components
 │   ├── BlockActionButtons.tsx
 │   ├── Header.tsx
@@ -65,39 +66,25 @@ This tool is ideal for educators looking to quickly compose lessons while mainta
 │       │   ├── TextBlock
 │       │   │   ├── FileUploader.tsx
 │       │   │   ├── ImageUploader.tsx
-│       │   │   ├── QuestionGenerator.tsx
 │       │   │   ├── RichTextEditor.tsx
 │       │   │   └── TextBlock.tsx
-│       │   └── __tests__
-│       │       ├── MultipleChoiceBlock.test.tsx
-│       │       └── TextBlock.test.tsx
 │       └── utils.ts
 ├── hooks
 │   ├── useAuth.ts
 │   ├── useLesson.ts
 │   └── useLessonBlocks.ts
 ├── jest.config.js
-├── jest.setup.js
 ├── next-env.d.ts
 ├── next.config.mjs
 ├── package-lock.json
 ├── package.json
-├── project_content.txt
 ├── public
 │   ├── icons
-│   │   ├── MA.svg
-│   │   ├── home.svg
-│   │   ├── library.svg
-│   │   ├── plus.svg
-│   │   ├── plus_element.svg
-│   │   ├── settings.svg
-│   │   └── upgrade.svg
 │   ├── images
 │   └── uploads
 ├── services
 │   ├── authService.ts
 │   └── lessonService.ts
-├── tsconfig.json
 ├── types
 │   ├── auth.ts
 │   └── lesson.ts
