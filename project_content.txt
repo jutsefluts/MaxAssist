@@ -1,0 +1,711 @@
+"use client";
+
+import React, { useState } from 'react';
+import PhaseComponent from '../features/lesson/PhaseComponent';
+import { LessonBlock, LessonPhase } from '@lessonTypes/lesson';  // Ensure you have proper types imported
+
+const Page: React.FC = () => {
+  // Example data: define phases and blocks state
+  const [phases, setPhases] = useState<LessonPhase[]>([
+    {
+      phaseName: 'Introduction',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Instruction',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Practice',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Conclusion',
+      blocks: [] // Initially empty
+    }
+  ]);
+
+  // Add block to a phase
+  const addBlock = (phaseIndex: number, block: LessonBlock) => {
+    const updatedPhases = [...phases];
+    updatedPhases[phaseIndex].blocks.push(block);
+    setPhases(updatedPhases);
+  };
+
+  // Remove block from a phase
+  const removeBlock = (phaseIndex: number, blockIndex: number) => {
+    const updatedPhases = [...phases];
+    updatedPhases[phaseIndex].blocks.splice(blockIndex, 1);
+    setPhases(updatedPhases);
+  };
+
+  // Move block up within a phase
+  const moveBlockUp = (phaseIndex: number, blockIndex: number) => {
+    if (blockIndex > 0) {
+      const updatedPhases = [...phases];
+      const blocks = updatedPhases[phaseIndex].blocks;
+      [blocks[blockIndex - 1], blocks[blockIndex]] = [blocks[blockIndex], blocks[blockIndex - 1]];
+      setPhases(updatedPhases);
+    }
+  };
+
+  // Move block down within a phase
+  const moveBlockDown = (phaseIndex: number, blockIndex: number) => {
+    const updatedPhases = [...phases];
+    const blocks = updatedPhases[phaseIndex].blocks;
+    if (blockIndex < blocks.length - 1) {
+      [blocks[blockIndex + 1], blocks[blockIndex]] = [blocks[blockIndex], blocks[blockIndex + 1]];
+      setPhases(updatedPhases);
+    }
+  };
+
+  return (
+    <div>
+      {phases.map((phase, index) => (
+        <PhaseComponent
+          key={index}
+          phase={phase}
+          onAddBlock={(block) => addBlock(index, block)}
+          onRemoveBlock={(blockIndex) => removeBlock(index, blockIndex)}
+          onMoveUp={(blockIndex) => moveBlockUp(index, blockIndex)}
+          onMoveDown={(blockIndex) => moveBlockDown(index, blockIndex)}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Page;import React from 'react';
+
+type BlockActionButtonsProps = {
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+};
+
+const BlockActionButtons: React.FC<BlockActionButtonsProps> = ({
+  onMoveUp,
+  onMoveDown,
+  onRemove,
+}) => {
+  return (
+    <div className="block-buttons-right">
+      <button onClick={onMoveUp} className="action-button move-up">
+        ▲
+      </button>
+      <button onClick={onRemove} className="action-button remove-button">
+        ✖
+      </button>
+      <button onClick={onMoveDown} className="action-button move-down">
+        ▼
+      </button>
+    </div>
+  );
+};
+
+export default BlockActionButtons;
+"use client";
+
+import React, { useState } from 'react';
+
+interface MultipleChoiceBlockProps {
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+}
+
+const MultipleChoiceBlock: React.FC<MultipleChoiceBlockProps> = ({
+  onMoveUp,
+  onRemove,
+  onMoveDown,
+}) => {
+  const [question, setQuestion] = useState('');
+  const [options, setOptions] = useState(['']);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null);
+
+  const addOption = () => setOptions([...options, '']);
+  const handleOptionChange = (index: number, value: string) => {
+    const updatedOptions = [...options];
+    updatedOptions[index] = value;
+    setOptions(updatedOptions);
+  };
+
+  return (
+    <div className="multiple-choice-block">
+      <div className="question-section">
+        <label htmlFor="question">Question:</label>
+        <input
+          type="text"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+        />
+      </div>
+
+      <div className="options-section">
+        {options.map((option, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              value={option}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+            />
+            <input
+              type="radio"
+              name="correctAnswer"
+              checked={correctAnswerIndex === index}
+              onChange={() => setCorrectAnswerIndex(index)}
+            />
+          </div>
+        ))}
+        <button onClick={addOption}>Add Option</button>
+      </div>
+
+      <div className="block-action-buttons">
+        <button onClick={onMoveUp} className="action-button">▲</button>
+        <button onClick={onMoveDown} className="action-button">▼</button>
+        <button onClick={onRemove} className="action-button remove-button">✖</button>
+      </div>
+    </div>
+  );
+};
+
+export default MultipleChoiceBlock;
+"use client";
+
+import React, { useState } from 'react';
+
+interface OpenQuestionBlockProps {
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+}
+
+const OpenQuestionBlock: React.FC<OpenQuestionBlockProps> = ({
+  onMoveUp,
+  onMoveDown,
+  onRemove,
+}) => {
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+
+  return (
+    <div className="open-question-block border p-4 rounded-lg shadow-md">
+      <div>
+        <label>Question:</label>
+        <input
+          type="text"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div className="mt-4">
+        <label>Answer:</label>
+        <input
+          type="text"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className="block-action-buttons mt-4">
+        <button onClick={onMoveUp} className="action-button">▲</button>
+        <button onClick={onMoveDown} className="action-button">▼</button>
+        <button onClick={onRemove} className="action-button remove-button">✖</button>
+      </div>
+    </div>
+  );
+};
+
+export default OpenQuestionBlock;
+import React, { useState } from 'react';
+
+interface FileUploaderProps {
+  onFileUpload: (file: File | null) => void;
+  onFileLinkAdd: (fileURL: string) => void;
+  onFileLinkRemove: () => void; // <-- Add a new prop to remove the link when the file is removed
+  isTextSelected: boolean;
+}
+
+const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, onFileLinkAdd, onFileLinkRemove, isTextSelected }) => {
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
+      setFileName(file.name);
+      onFileUpload(file); // Send file to parent component
+      onFileLinkAdd(fileUrl); // Attach the file URL as a link to the selected text
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setFileName(null);
+    onFileUpload(null); // Reset file
+    onFileLinkRemove(); // Remove the link from the editor text
+  };
+
+  const handleAttachFileClick = () => {
+    if (!isTextSelected) {
+      alert('Please select text before uploading a file.');
+    } else {
+      document.getElementById('file-upload')?.click();
+    }
+  };
+
+  return (
+    <div className="upload-preview-container">
+      {fileName ? (
+        <>
+          <p className="file-preview">{fileName}</p>
+          <button onClick={handleRemoveFile} className="textblock-button-remove">
+            Remove File
+          </button>
+        </>
+      ) : (
+        <>
+          <button onClick={handleAttachFileClick} className="textblock-button">
+            Attach File
+          </button>
+          <input
+            type="file"
+            id="file-upload"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default FileUploader;import React, { useState } from 'react';
+
+interface ImageUploaderProps {
+  onImageUpload: (url: string) => void;
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
+      onImageUpload(imageUrl); // Notify parent component
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    onImageUpload(''); // Notify parent component that image is removed
+  };
+
+  return (
+    <div className="image-uploader-container">
+      {imagePreview ? (
+        <div>
+          <img src={imagePreview} alt="Uploaded" className="image-tiny-preview" />
+          <button onClick={handleRemoveImage} className="textblock-button-remove">
+            Delete Image
+          </button>
+        </div>
+      ) : (
+        <div>
+          <button onClick={() => document.getElementById('image-upload')?.click()} className="textblock-button">
+            Add Image
+          </button>
+          <input
+            type="file"
+            id="image-upload"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ImageUploader;import React from 'react';
+
+interface QuestionGeneratorProps {
+  onGenerateMultipleChoice: () => void;
+  onGenerateOpenQuestion: () => void;
+}
+
+const QuestionGenerator: React.FC<QuestionGeneratorProps> = ({ onGenerateMultipleChoice, onGenerateOpenQuestion }) => {
+  return (
+    <div className="question-generator-container">
+      <button onClick={onGenerateMultipleChoice} className="textblock-button">Generate Multiple Choice</button>
+      <button onClick={onGenerateOpenQuestion} className="textblock-button">Generate Open Question</button>
+    </div>
+  );
+};
+
+export default QuestionGenerator;
+import React from 'react';
+import dynamic from 'next/dynamic';
+import { EditorState } from 'draft-js';
+import { EditorProps } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
+const Editor = dynamic<EditorProps>(() => import('react-draft-wysiwyg').then(mod => mod.Editor), { ssr: false });
+
+interface RichTextEditorProps {
+  editorState: EditorState;
+  onEditorStateChange: (state: EditorState) => void;
+}
+
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ editorState, onEditorStateChange }) => {
+  const handleEditorChange = (state: EditorState) => {
+    onEditorStateChange(state);
+  };
+
+  return (
+    <div className="rich-text-editor-container">
+      <Editor
+        editorState={editorState}
+        onEditorStateChange={handleEditorChange}
+        toolbar={{
+          options: ['inline', 'blockType', 'list'], // Removed 'link' options
+          inline: {
+            options: ['bold', 'italic', 'underline'],
+          },
+          blockType: {
+            options: [
+              { label: 'Normal', style: 'unstyled' },
+              { label: 'H1', style: 'header-one' },
+              { label: 'H2', style: 'header-two' },
+              { label: 'H3', style: 'header-three' },
+            ],
+          },
+          list: {
+            options: ['unordered', 'ordered'],
+          },
+        }}
+      />
+    </div>
+  );
+};
+
+export default RichTextEditor;
+"use client";
+
+import React, { useState } from 'react';
+import ImageUploader from './ImageUploader';
+import RichTextEditor from './RichTextEditor';
+import FileUploader from './FileUploader';
+import BlockActionButtons from '../../../../components/BlockActionButtons';
+import { EditorState, Modifier, RichUtils } from 'draft-js';
+
+interface TextBlockProps {
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+}
+
+const TextBlock: React.FC<TextBlockProps> = ({ onMoveUp, onMoveDown, onRemove }) => {
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  // Function to add a file link
+  const handleFileLinkAdd = (fileURL: string) => {
+    const selection = editorState.getSelection();
+
+    // Check if text is selected
+    if (!selection.isCollapsed()) {
+      const contentState = editorState.getCurrentContent();
+      const contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: fileURL });
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+      const newContentState = Modifier.applyEntity(contentStateWithEntity, selection, entityKey);
+      const newEditorState = EditorState.push(editorState, newContentState, 'apply-entity');
+      setEditorState(RichUtils.toggleLink(newEditorState, selection, entityKey));
+    } else {
+      alert('Please select text to add a file link.');
+    }
+  };
+
+  // Function to remove the file link from the text
+  const handleFileLinkRemove = () => {
+    const selection = editorState.getSelection();
+    if (!selection.isCollapsed()) {
+      setEditorState(RichUtils.toggleLink(editorState, selection, null)); // Remove link from the selected text
+    }
+  };
+
+  // Function to handle file upload
+  const handleFileUpload = (file: File | null) => {
+    const selection = editorState.getSelection();
+    if (!selection.isCollapsed()) {
+      console.log('File Uploaded:', file);
+    } else {
+      alert('Please select text before uploading a file.');
+      return; // Prevent file upload from proceeding
+    }
+  };
+
+  // Check if text is selected
+  const isTextSelected = !editorState.getSelection().isCollapsed();
+
+  return (
+    <div className="textblock-container">
+      <ImageUploader onImageUpload={(url) => console.log('Image Uploaded:', url)} />
+
+      {/* FileUploader for uploading and linking files */}
+      <FileUploader
+        onFileUpload={handleFileUpload}
+        onFileLinkAdd={handleFileLinkAdd}
+        onFileLinkRemove={handleFileLinkRemove}  // Pass the new file link remove function
+        isTextSelected={isTextSelected}
+      />
+
+      <div className="textblock-editor-container">
+        <RichTextEditor editorState={editorState} onEditorStateChange={setEditorState} />
+      </div>
+
+      {/* Block action buttons use props from the parent */}
+      <BlockActionButtons 
+        onMoveUp={onMoveUp} 
+        onMoveDown={onMoveDown} 
+        onRemove={onRemove} 
+      />
+    </div>
+  );
+};
+
+export default TextBlock;
+"use client";
+
+import React from "react";
+import MultipleChoiceBlock from "./blocks/MultipleChoiceBlock/MultipleChoiceBlock";
+import OpenQuestionBlock from "./blocks/OpenQuestionBlock/OpenQuestionBlock";
+import TextBlock from "./blocks/TextBlock/TextBlock";
+import { LessonBlock, LessonPhase } from "@lessonTypes/lesson";
+import { nanoid } from "nanoid"; 
+
+interface PhaseComponentProps {
+  phase: LessonPhase;
+  onAddBlock: (block: LessonBlock) => void;
+  onRemoveBlock: (index: number) => void;
+  onMoveUp: (index: number) => void;
+  onMoveDown: (index: number) => void;
+}
+
+const PhaseComponent: React.FC<PhaseComponentProps> = ({
+  phase,
+  onAddBlock,
+  onRemoveBlock,
+  onMoveUp,
+  onMoveDown,
+}) => {
+  const handleAddBlock = (blockType: LessonBlock["type"]) => {
+    let newBlock: LessonBlock;
+
+    // Ensure the correct block shape is created based on block type
+    switch (blockType) {
+      case "TextBlock":
+        newBlock = { id: nanoid(), type: "TextBlock", content: "", lesson_phase: phase.phaseName };
+        break;
+      case "OpenQuestionBlock":
+        newBlock = {
+          id: nanoid(),
+          type: "OpenQuestionBlock",
+          question: "",
+          answer: "",
+          lesson_phase: phase.phaseName,
+        };
+        break;
+      case "MultipleChoiceBlock":
+        newBlock = {
+          id: nanoid(),
+          type: "MultipleChoiceBlock",
+          question: "",
+          options: [],
+          correctAnswers: [],
+          lesson_phase: phase.phaseName,
+        };
+        break;
+      default:
+        throw new Error("Invalid block type");
+    }
+
+    onAddBlock(newBlock);
+  };
+
+  return (
+    <div className="phase-container">
+      <h2>{phase.phaseName}</h2>
+      <div className="flex space-x-2 mb-4">
+        <button onClick={() => handleAddBlock("TextBlock")} className="bg-blue-500 text-white px-3 py-2 rounded-lg">
+          Add Text Block
+        </button>
+        <button onClick={() => handleAddBlock("OpenQuestionBlock")} className="bg-green-500 text-white px-3 py-2 rounded-lg">
+          Add Open Question Block
+        </button>
+        <button onClick={() => handleAddBlock("MultipleChoiceBlock")} className="bg-purple-500 text-white px-3 py-2 rounded-lg">
+          Add Multiple Choice Block
+        </button>
+      </div>
+
+      {/* Render Blocks */}
+      <div className="block-list">
+        {phase.blocks.map((block: LessonBlock, index: number) => {
+          const blockProps = {
+            key: block.id,
+            onMoveUp: () => onMoveUp(index),
+            onMoveDown: () => onMoveDown(index),
+            onRemove: () => onRemoveBlock(index),
+            ...block,
+          };
+
+          // Handle rendering based on block type
+          switch (block.type) {
+            case "TextBlock":
+              return <TextBlock {...blockProps} />;
+            case "OpenQuestionBlock":
+              return <OpenQuestionBlock {...blockProps} />;
+            case "MultipleChoiceBlock":
+              return <MultipleChoiceBlock {...blockProps} />;
+            default:
+              return null;
+          }
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default PhaseComponent;
+/* Main container for the text block */
+.textblock-container {
+  position: relative;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  max-height: 500px; /* Restricting the overall height */
+  overflow-y: auto; /* Adds scroll when the content exceeds the height */
+}
+
+/* Editor container inside the text block */
+.textblock-editor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  position: relative;
+  padding-right: 60px; /* Adding padding to prevent overlap with the buttons */
+}
+
+/* Block action buttons (move/remove) inside the text block */
+.block-buttons-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Buttons start from top */
+  align-items: center;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 10;
+}
+
+/* Action buttons styling */
+.action-button {
+  padding: 6px 8px;
+  background-color: #f7fafc;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #2d3748;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  margin-top: 5px;
+}
+
+.action-button:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.remove-button {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: #c53030;
+  border-color: #9b2c2c;
+}
+
+/* Styling for Add Image / Attach File buttons */
+.textblock-button {
+  padding: 8px 12px;
+  background-color: #edf2f7;
+  color: #2d3748;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.textblock-button:hover {
+  background-color: #e2e8f0;
+}
+
+/* Upload and Delete button styling */
+.textblock-button-remove {
+  padding: 8px 12px;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.textblock-button-remove:hover {
+  background-color: #c53030;
+  transform: scale(1.05);
+}
+
+/* Tiny image preview next to the upload buttons */
+.image-tiny-preview {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* File name styling */
+.file-preview {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #2d3748;
+}
+
+/* Editor container styling */
+.rich-text-editor-container .rdw-editor-wrapper {
+  min-height: 250px; /* Increase the height of the editor */
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+/* Flex alignment for image/file preview and buttons */
+.upload-preview-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}

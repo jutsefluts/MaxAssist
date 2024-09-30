@@ -1,42 +1,148 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Main container for text block, multiple choice block, and open question block */
+.textblock-container, .multiple-choice-block, .open-question-block {
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  max-height: 500px;
+  overflow-y: auto; /* Adds scroll when content exceeds height */
+  background-color: #f7f7f7;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Editor container and input containers */
+.textblock-editor-container, .question-section, .options-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  position: relative;
+  padding-right: 60px; /* Adding padding to prevent overlap with the buttons */
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+/* Input styling for options and questions in multiple choice and open question blocks */
+.options-section input[type="text"], .question-section input[type="text"], .open-question-block input {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 80%;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.options-section input[type="radio"] {
+  margin-left: 8px;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+/* Block action buttons (move/remove) inside all blocks */
+.block-buttons-right, .block-action-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Buttons start from top */
+  align-items: center;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 10;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Action buttons styling (move up, move down, remove) */
+.action-button {
+  padding: 6px 8px;
+  background-color: #f7fafc;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #2d3748;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  margin-top: 5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.action-button:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.remove-button {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: #c53030;
+  border-color: #9b2c2c;
+}
+
+/* Styling for Add Option, Add Image, and Attach File buttons */
+.textblock-button, .add-option-button {
+  padding: 8px 12px;
+  background-color: #edf2f7;
+  color: #2d3748;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.textblock-button:hover, .add-option-button:hover {
+  background-color: #e2e8f0;
+}
+
+/* Upload and Delete button styling */
+.textblock-button-remove {
+  padding: 8px 12px;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.textblock-button-remove:hover {
+  background-color: #c53030;
+  transform: scale(1.05);
+}
+
+/* Tiny image preview next to the upload buttons */
+.image-tiny-preview {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* File name styling for file previews */
+.file-preview {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #2d3748;
+}
+
+/* Editor container styling for RichTextEditor */
+.rich-text-editor-container .rdw-editor-wrapper {
+  min-height: 250px; /* Increase the height of the editor */
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+/* Flex alignment for image/file preview and buttons in upload containers */
+.upload-preview-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Styling for the question and answer inputs in open question block */
+.open-question-block .question-section, .open-question-block .mt-4 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

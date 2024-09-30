@@ -1,95 +1,78 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import React, { useState } from 'react';
+import PhaseComponent from '../features/lesson/PhaseComponent';
+import { LessonBlock, LessonPhase } from '@lessonTypes/lesson';  // Ensure you have proper types imported
+
+const Page: React.FC = () => {
+  // Example data: define phases and blocks state
+  const [phases, setPhases] = useState<LessonPhase[]>([
+    {
+      phaseName: 'Introduction',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Instruction',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Practice',
+      blocks: [] // Initially empty
+    },
+    {
+      phaseName: 'Conclusion',
+      blocks: [] // Initially empty
+    }
+  ]);
+
+  // Add block to a phase
+  const addBlock = (phaseIndex: number, block: LessonBlock) => {
+    const updatedPhases = [...phases];
+    updatedPhases[phaseIndex].blocks.push(block);
+    setPhases(updatedPhases);
+  };
+
+  // Remove block from a phase
+  const removeBlock = (phaseIndex: number, blockIndex: number) => {
+    const updatedPhases = [...phases];
+    updatedPhases[phaseIndex].blocks.splice(blockIndex, 1);
+    setPhases(updatedPhases);
+  };
+
+  // Move block up within a phase
+  const moveBlockUp = (phaseIndex: number, blockIndex: number) => {
+    if (blockIndex > 0) {
+      const updatedPhases = [...phases];
+      const blocks = updatedPhases[phaseIndex].blocks;
+      [blocks[blockIndex - 1], blocks[blockIndex]] = [blocks[blockIndex], blocks[blockIndex - 1]];
+      setPhases(updatedPhases);
+    }
+  };
+
+  // Move block down within a phase
+  const moveBlockDown = (phaseIndex: number, blockIndex: number) => {
+    const updatedPhases = [...phases];
+    const blocks = updatedPhases[phaseIndex].blocks;
+    if (blockIndex < blocks.length - 1) {
+      [blocks[blockIndex + 1], blocks[blockIndex]] = [blocks[blockIndex], blocks[blockIndex + 1]];
+      setPhases(updatedPhases);
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div>
+      {phases.map((phase, index) => (
+        <PhaseComponent
+          key={index}
+          phase={phase}
+          onAddBlock={(block) => addBlock(index, block)}
+          onRemoveBlock={(blockIndex) => removeBlock(index, blockIndex)}
+          onMoveUp={(blockIndex) => moveBlockUp(index, blockIndex)}
+          onMoveDown={(blockIndex) => moveBlockDown(index, blockIndex)}
         />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))}
     </div>
   );
-}
+};
+
+export default Page;
